@@ -1,5 +1,7 @@
 /*
-  Kegerator Thermostat
+  Kegerator Thermostat Version 1.01
+  v1.00 Code complete
+  v1.01 Adjusting delay times from 50000 to 40000
  
  
   The circuit:
@@ -34,8 +36,9 @@ const int buttonUpPin = 8;     // the number of the Temp Up pin
 const int buttonDnPin = 7;     // the number of the Temp Down pin
 const int tempPin = 0;         // analog temp sensor pin
 // set wait values
-const int maxOffWait = 30000;  // How many ms to wait to turn off
-const int maxOnWait = 30000;   // How many ms to wait to turn on
+// v1.01 Adjusting delay times from 50000 to 40000
+const int maxOffWait = 40000;  // How many ms to wait to turn off
+const int maxOnWait = 40000;   // How many ms to wait to turn on
 
 
 // variables:
@@ -54,7 +57,8 @@ void setup() {
   lcd.begin(16, 2);
   // initialize the pushbutton pins as input:
   pinMode(relay, OUTPUT);
-  digitalWrite(relay, HIGH);
+  digitalWrite(relay, LOW);
+  //digitalWrite(relay, HIGH);
   pinMode(buttonUpPin, INPUT);  
   pinMode(buttonDnPin, INPUT);  
   lcd.setCursor(0, 0);
@@ -111,13 +115,13 @@ void loop() {
   if (flagOff >= maxOffWait){
     // turn on relay
     lcd.setCursor(15, 1);
-    lcd.print("-");
+    lcd.print("Z");
     digitalWrite(relay, LOW);
     flagOff = 0;
     }
     
 //Relay switch on logic (Anti-thrashing) 
-  if ((tempTemp < currTemp)&&(flagOn == 0)) {  
+  if ((setTemp < currTemp)&&(flagOn == 0)) {  
     flagOn = 1;
     }
   if ((flagOn != 0)&&(flagOn <= maxOnWait)){
@@ -126,7 +130,7 @@ void loop() {
   if (flagOn >= maxOnWait){
     // turn off relay
     lcd.setCursor(15, 1);
-    lcd.print("+");
+    lcd.print("&");
     digitalWrite(relay, HIGH);
     flagOn = 0;
     }
