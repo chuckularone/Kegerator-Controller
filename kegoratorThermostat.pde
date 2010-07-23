@@ -1,7 +1,6 @@
 /*
-  Kegerator Thermostat Version 1.01
-  v1.00 Code complete
-  v1.01 Adjusting delay times from 50000 to 40000
+  Kegerator Thermostat V 1.00
+  V 1.01 Set temp display adjustment - subtract 2 from setTemp to display the actual setTemp to make up for the math.
  
  
   The circuit:
@@ -36,13 +35,13 @@ const int buttonUpPin = 8;     // the number of the Temp Up pin
 const int buttonDnPin = 7;     // the number of the Temp Down pin
 const int tempPin = 0;         // analog temp sensor pin
 // set wait values
-// v1.01 Adjusting delay times from 50000 to 40000
-const int maxOffWait = 40000;  // How many ms to wait to turn off
-const int maxOnWait = 40000;   // How many ms to wait to turn on
+const int maxOffWait = 30000;  // How many ms to wait to turn off
+const int maxOnWait = 30000;   // How many ms to wait to turn on
 
 
 // variables:
-int setTemp = 50;              // variable storing the Set temp
+int setTemp = 52;              // variable storing the Set temp
+int dispTemp = 0;              // Display the set temp (-2 degrees to make up for the math)
 int currTemp = 0;              // variable storing the actual, current temp
 int tempTemp = 0;              // temporary temp
 int buttonUpState = 0;         // variable for reading the pushbutton status
@@ -57,8 +56,7 @@ void setup() {
   lcd.begin(16, 2);
   // initialize the pushbutton pins as input:
   pinMode(relay, OUTPUT);
-  digitalWrite(relay, LOW);
-  //digitalWrite(relay, HIGH);
+  digitalWrite(relay, HIGH);
   pinMode(buttonUpPin, INPUT);  
   pinMode(buttonDnPin, INPUT);  
   lcd.setCursor(0, 0);
@@ -97,7 +95,8 @@ void loop() {
     setTemp--;  
     delay(250);
   }
-  lcd.print(setTemp); 
+  dispTemp = setTemp-2;
+  lcd.print(dispTemp); 
   lcd.print("F ");
 
   //Get the temp
@@ -115,13 +114,13 @@ void loop() {
   if (flagOff >= maxOffWait){
     // turn on relay
     lcd.setCursor(15, 1);
-    lcd.print("Z");
+    lcd.print("-");
     digitalWrite(relay, LOW);
     flagOff = 0;
     }
     
 //Relay switch on logic (Anti-thrashing) 
-  if ((setTemp < currTemp)&&(flagOn == 0)) {  
+  if ((tempTemp < currTemp)&&(flagOn == 0)) {  
     flagOn = 1;
     }
   if ((flagOn != 0)&&(flagOn <= maxOnWait)){
@@ -130,7 +129,7 @@ void loop() {
   if (flagOn >= maxOnWait){
     // turn off relay
     lcd.setCursor(15, 1);
-    lcd.print("&");
+    lcd.print("+");
     digitalWrite(relay, HIGH);
     flagOn = 0;
     }
