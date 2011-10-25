@@ -1,6 +1,8 @@
 /*
   Kegerator Thermostat V 1.00
   V 1.01 Set temp display adjustment - subtract 2 from setTemp to display the actual setTemp to make up for the math.
+  V 1.02 Changed default temp at startup from 50 to 42 (normalizes to 40) degrees
+
  
  
   The circuit:
@@ -40,7 +42,7 @@ const int maxOnWait = 30000;   // How many ms to wait to turn on
 
 
 // variables:
-int setTemp = 52;              // variable storing the Set temp
+int setTemp = 42;              // variable storing the Set temp
 int dispTemp = 0;              // Display the set temp (-2 degrees to make up for the math)
 int currTemp = 0;              // variable storing the actual, current temp
 int tempTemp = 0;              // temporary temp
