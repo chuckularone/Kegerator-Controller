@@ -1,7 +1,5 @@
 /*
-  Kegerator Thermostat V 1.00
-  V 1.01 Set temp display adjustment - subtract 2 from setTemp to display the actual setTemp to make up for the math.
-  V 1.02 Changed default temp at startup from 50 to 42 (normalizes to 40) degrees
+  Incubator Thermostat V 0.01
 
  
  
@@ -42,7 +40,7 @@ const int maxOnWait = 30000;   // How many ms to wait to turn on
 
 
 // variables:
-int setTemp = 42;              // variable storing the Set temp
+int setTemp = 60;              // variable storing the Set temp
 int dispTemp = 0;              // Display the set temp (-2 degrees to make up for the math)
 int currTemp = 0;              // variable storing the actual, current temp
 int tempTemp = 0;              // temporary temp
@@ -62,7 +60,7 @@ void setup() {
   pinMode(buttonUpPin, INPUT);  
   pinMode(buttonDnPin, INPUT);  
   lcd.setCursor(0, 0);
-  lcd.print("   Key Largo");  
+  lcd.print(" White Clay");  
   lcd.setCursor(0, 1);
   lcd.print("    Brewery");  
   delay(500);
@@ -105,6 +103,11 @@ void loop() {
   tempIn = analogRead(tempPin)/8.0;
   currTemp = (tempIn * 9)/ 5 + 32; // converts to fahrenheit  
   tempTemp = setTemp-1;
+
+//
+//  Change code below here for heating instead of cooling. Thrashing is less of an issue. 
+//    Lightbulbs are way cheaper than compressors
+//
 
 //Relay switch off logic (Anti-thrashing)
   if ((tempTemp > currTemp)&&(flagOff == 0)) {  
