@@ -40,8 +40,8 @@ const int maxOnWait = 30000;   // How many ms to wait to turn on
 
 
 // variables:
-int setTemp = 60;              // variable storing the Set temp
-int dispTemp = 0;              // Display the set temp (-2 degrees to make up for the math)
+int setTemp = 25;              // variable storing the Set temp CELCIUS
+int dispTemp = 0;              // Display the set temp
 int currTemp = 0;              // variable storing the actual, current temp
 int tempTemp = 0;              // temporary temp
 int buttonUpState = 0;         // variable for reading the pushbutton status
@@ -77,7 +77,7 @@ void loop() {
   // (note: line 1 is the second row, since counting begins with 0):
   lcd.setCursor(3, 1);
   lcd.print(currTemp); 
-  lcd.print("F  ");
+  lcd.print("C  ");
   lcd.setCursor(9, 1);
   lcd.print("|");
   lcd.setCursor(11, 1);
@@ -95,21 +95,17 @@ void loop() {
     setTemp--;  
     delay(250);
   }
-  dispTemp = setTemp-2;
+  dispTemp = setTemp;
   lcd.print(dispTemp); 
-  lcd.print("F ");
+  lcd.print("C ");
 
   //Get the temp
   tempIn = analogRead(tempPin)/8.0;
-  currTemp = (tempIn * 9)/ 5 + 32; // converts to fahrenheit  
-  tempTemp = setTemp-1;
+  //currTemp = (tempIn * 9)/ 5 + 32; // converts to fahrenheit
+  currTemp = tempIn;  
+  tempTemp = setTemp;
 
-//
-//  Change code below here for heating instead of cooling. Thrashing is less of an issue. 
-//    Lightbulbs are way cheaper than compressors
-//
-
-//Relay switch off logic (Anti-thrashing)
+//Relay switch ON logic (Anti-thrashing)
   if ((tempTemp > currTemp)&&(flagOff == 0)) {  
     flagOff = 1;
     }
@@ -119,12 +115,12 @@ void loop() {
   if (flagOff >= maxOffWait){
     // turn on relay
     lcd.setCursor(15, 1);
-    lcd.print("-");
-    digitalWrite(relay, LOW);
+    lcd.print("+");
+    digitalWrite(relay, HIGH);
     flagOff = 0;
     }
     
-//Relay switch on logic (Anti-thrashing) 
+//Relay switch OFF logic (Anti-thrashing) 
   if ((tempTemp < currTemp)&&(flagOn == 0)) {  
     flagOn = 1;
     }
@@ -134,8 +130,8 @@ void loop() {
   if (flagOn >= maxOnWait){
     // turn off relay
     lcd.setCursor(15, 1);
-    lcd.print("+");
-    digitalWrite(relay, HIGH);
+    lcd.print("-");
+    digitalWrite(relay, LOW);
     flagOn = 0;
     }
 }
